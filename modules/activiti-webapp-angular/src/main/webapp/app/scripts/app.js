@@ -1,47 +1,40 @@
 'use strict';
 
-angular.module('activitiApp', ['ui', 'filters', 'ui.bootstrap'])
+angular.module('activitiApp', [ 'ngResource', 'ui.bootstrap', "ngRoute",'angularMoment'])
 
     // Temporary until we have a login page: always log in with kermit:kermit
-    .config(['$httpProvider', function ($httpProvider) {
-        $httpProvider.defaults.headers.common['Authorization'] = 'Basic a2VybWl0Omtlcm1pdA==';
-    }])
+//    .config(['$httpProvider', function ($httpProvider) {
+//        $httpProvider.defaults.headers.common['Authorization'] = 'Basic a2VybWl0Omtlcm1pdA==';
+//    }])
+
+
 
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('/', {
-                templateUrl: 'views/main.html',
-                controller: 'MainCtrl'
-            })
-            .when('/tasks', {
+                templateUrl: 'views/login.html',
+                controller: 'LoginCtrl'
+            }) .when('/dashboard', {
+                templateUrl: 'views/dashboard.html',
+                controller: 'DashboardCtrl'
+            }).when('/users', {
+                templateUrl: 'views/users.html',
+                controller: 'UsersCtrl'
+            }).when('/groups', {
+                templateUrl: 'views/groups.html',
+                controller: 'GroupsCtrl'
+            }).when('/tasks', {
                 templateUrl: 'views/tasks.html',
-                controller: 'TaskCtrl'
+                controller: 'TasksCtrl'
             })
+//            .when('/tasks', {
+//                templateUrl: 'views/tasks.html',
+//                controller: 'TaskCtrl'
+//            })
             .otherwise({
                 redirectTo: '/'
             });
     }]);
 
-// TODO: extract these in a separate filters.js?
-angular.module('filters', [])
-    .filter('makeRange', function () {
-        return function (input) {
-            var lowBound, highBound;
-            switch (input.length) {
-                case 1:
-                    lowBound = 0;
-                    highBound = parseInt(input[0]) - 1;
-                    break;
-                case 2:
-                    lowBound = parseInt(input[0]);
-                    highBound = parseInt(input[1]);
-                    break;
-                default:
-                    return input;
-            }
-            var result = [];
-            for (var i = lowBound; i <= highBound; i++)
-                result.push(i);
-            return result;
-        };
-    });
+
+

@@ -1,117 +1,81 @@
-.general-header {
-    margin: 0;
-    background-color: #444444;
+div.row.user-row.ng-scope {
+    padding: 10px 0;
+    border-bottom: 1px solid #e7e7e7;
 }
 
-.nav.general-header {
-    margin: 0;
+div.user-row:first-child {
+    border-top: 1px solid #e7e7e7;
+    margin-top: 20px;
 }
 
-.general-header a {
-    margin-left: 30px;
-    padding-left: 0;
-    color: #ffffff;
+div.row.user-row:hover {
+    background-color: rgb(248, 248, 248);
 }
 
-.nav-pills > .active > a, .nav-pills > .active > a:hover, .nav-pills > .active > a:focus {
-    background-color: #444444;
-    color: #4474BD;
+.dropdown-user {
+    padding-top: 11px;
 }
 
-.panel-header {
-    background-color: lightgrey;
+.action-row {
+    margin-bottom: 15px;
+}
+
+.glyphicon {
+    padding-right: 5px;
+}
+
+.task-holder-main{
+    right: 50px;
+}
+
+.task-holder {
+    /*height: 500px;*/
+    width: 500px;
+    background-color: white;
+    border-top: 1px solid #eee;
+    border-left: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    float: right;
+    margin-left: 15px;
+}
+
+.task-holder .title-bar{
+
+    padding: 10px;
+    margin: -1px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid transparent;
+    border-color: #e7e7e7;
+}
+
+div.row.user-row > div {
     height: 40px;
 }
 
-.panel-header-text {
-    color: #7c8280;
-    font-size: smaller;
-    display: inline-block;
-    padding: 2px;
+.row-danger {
+    border-bottom:1px solid #d43f3a!important;
 }
 
-.task-panel {
-    border: 1px solid lightgrey;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    -webkit-box-shadow: 0 0 20px rgba(0,0,0,0.09);
-    -moz-box-shadow: 0 0 20px rgba(0,0,0,0.09);
-    margin-top: 20px;
-    max-width: 500px;
-    min-height: 600px;
-    max-height: 600px;
-    overflow: hidden;
+.row-success{
+
 }
 
-#tasks {
-    border-bottom: 1px solid lightgrey;
-    overflow: auto;
-    max-height: 460px;
-    min-height: 460px;
+.row-warning{
+    border-bottom:1px solid #eea236!important;
 }
 
-.task {
-    border-bottom: 1px solid transparent;
-    border-top: 1px solid transparent;
-    cursor: pointer;
-    height: 30px;
-    line-height: 30px;
-    padding: 10px;
+.aaFuture{
+
 }
 
-.task:hover {
-    background-color: #f5f5f5;
-    border-bottom: 1px solid lightgrey;
-    border-top: 1px solid lightgrey;
+.aaPast{
+    color:#d43f3a;
 }
 
-#task-search {
-    float: left;
-    margin-left: 10px;
-    margin-top: 5px;
-}
-
-#task-paging {
-    float:right;
-    height: 24px;
-    margin: 7px 15px 0 0;
-    width: 60px;
-}
-
-.task-counts {
-    background-color: #F0F0F0;
-    border-bottom: 1px solid lightgrey;
-    color: dimgray;
-    font-size: smaller;
-    text-align: center;
-}
-
-#task-pagination li {
-    cursor: pointer;
-}
-
-#panel-header-section-group {
-    background:url('../img/vertical-separator.png') no-repeat center left;
-    display: inline-block;
-    float: right;
-    margin-right: 10px;
-    padding-left: 10px;
-}
-
-#task-group-select {
-    height: 24px;
-    margin-top: 7px;
-    width: 130px;
-}
-
-.task-claim-button {
-    float: right;
-    margin-right: 10px;
-    visibility: hidden;
-}
-
-.task:hover .task-claim-button {
-    visibility: visible;
+.aaCurrent{
+    color:#ff851b;
 }

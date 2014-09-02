@@ -1,184 +1,201 @@
-'use strict';
+angular.module('activitiApp').controller("TasksCtrl", function ($scope, $rootScope, $location, TasksService, FormDataService, moment) {
+    if (typeof  $rootScope.loggedin == 'undefined' || $rootScope.loggedin == false) {
+        $location.path('/login');
+        return;
+    }
 
-angular.module('activitiApp')
-    .controller('TaskCtrl', function ($scope, $http) {
+    /**
+     * involved
+     * owned
+     * assigned
+     *
+     * @type {string}
+     */
+    $scope.tasksType = "assignee";
 
-        // Default settings
-        $scope.loadingTasks = true;
-        $scope.pageSize = 10;
-        $scope.currentPage = 1;
-        var noGroupId = '_activiti_invalid_group';
-        var noGroupElement = { 'name' : '', 'id' : noGroupId};
+    function getTasksQuery() {
+        if ($scope.tasksType == "involved") {
+            return {"size": 1000, "involvedUser": $rootScope.username};
+        } else if ($scope.tasksType == "owned") {
+            return {"size": 1000, "owner": $rootScope.username};
+        } else if ($scope.tasksType == "unassigned") {
+            return {"size": 1000, "unassigned": true};
+        } else {//assigned
+            return {"size": 1000, "assignee": $rootScope.username};
+        }
+    }
 
-        /*
-         * Fetch tasks async when controller instantiates
-         */
-        $http.get('http://localhost:8080/activiti-webapp-rest2/service/runtime/tasks').
-            success(function (data, status, headers, config) {
-                showTasks(data);
-            }).
-            error(function (data, status, headers, config) {
-                console.log('Couldn\'t fetch tasks : ' + status);
-                $scope.loadingTasks = false;
-            });
 
-        // TODO: extract this in separate logic later!
-        // TODO: remove hardcoded kermit dependency
-        /*
-         * Fetch user async when controller instantiates
-         */
-        $http.get('http://localhost:8080/activiti-webapp-rest2/service/user/kermit/groups').
-            success(function (data, status, headers, config) {
-                var groups = [];
-                groups.push(noGroupElement);
-                for (var i=0; i<data.data.length; i++) {
-                    if (data.data[i].type == 'assignment') {
-                        groups.push(data.data[i]);
+    $scope.loadTasksType = function (tasksType) {
+        $scope.tasksType = tasksType;
+        $scope.loadTasks();
+    }
+
+    $scope.loadTasks = function () {
+        $scope.tasks = TasksService.get(getTasksQuery());
+    }
+
+    $scope.assignMe = function (detailedTask) {
+        var taskToEdit = new TasksService({"assignee": $rootScope.username});
+        taskToEdit.$update({"taskId": detailedTask.id}, function () {
+            $scope.loadTasks();
+        });
+
+    }
+
+    $scope.takeOwnerShip = function (detailedTask) {
+        var taskToEdit = new TasksService({"owner": $rootScope.username});
+        taskToEdit.$update({"taskId": detailedTask.id}, function () {
+            $scope.loadTasks();
+        });
+    }
+
+
+
+    $scope.loadTask = function (task) {
+        var form = null;
+        FormDataService.get({"taskId": task.id}, function (data) {
+
+            var propertyForSaving = {};
+
+            for (var i = 0; i < data.formProperties.length; i++) {
+                var elem = data.formProperties[i];
+                propertyForSaving[elem.id] = {
+                    "value": elem.value,
+                    "id": elem.id,
+                    "writable": elem.writable
+                };
+
+                if (elem.datePattern != null) {//if date
+                    propertyForSaving[elem.id].opened = false; //for date picker
+                    propertyForSaving[elem.id].datePattern = elem.datePattern;
+                }
+
+                if (elem.required == true && elem.type == "boolean") {
+                    if (elem.value == null) {
+                        propertyForSaving[elem.id].value = false;
                     }
                 }
-
-                if (groups.length > 0) {
-                    $scope.groups = groups;
-                    $scope.candidateGroup = groups[0];
-                }
-
-            }).
-            error(function (data, status, headers, config) {
-                console.log('Couldn\'t fetch user groups : ' + status);
-            });
-
-        /*
-         * Task searching
-         */
-        $scope.search = function () {
-            executeSearch();
-        };
-
-        /*
-         * Task pagination
-         */
-        $scope.switchPage = function (page) {
-            executeSearch(page);
-        };
-
-        /**
-         * Builds the URL
-         */
-        var createSearchUrl = function (page) {
-            var url = encodeURI('http://localhost:8080/activiti-webapp-rest2/service/runtime/tasks?size=' + $scope.pageSize);
-
-            // name
-            if ($scope.searchQuery && $scope.searchQuery.length > 0) {
-                url = url + '&nameLike=%' + $scope.searchQuery + '%';
             }
 
-            // pagination
-            if (page) {
-                url = url + '&start=' + ((page - 1) * $scope.pageSize);
-            } else {
-                url = url + '&start=0';
+            task.form = data;
+            task.propertyForSaving = propertyForSaving;
+
+            if (getTaskFromDetails(task) == null) {
+                $scope.detailedTasks.push(task);
             }
 
-            // Group
-            if ($scope.candidateGroup && $scope.candidateGroup.id != noGroupId) {
-                url = url + '&candidateGroup=' + $scope.candidateGroup.id;
+        }, function (data) {
+
+            if (data.data.statusCode == 404) {
+                $scope.detailedTasks.push(task);
             }
 
-            url = encodeURI(url);
-            console.log('Calling URL ' + url);
-            return url;
-        };
+        });
+    };
 
-        /*
-         * Execute the async search
-         */
-        var executeSearch = function (page) {
-            $scope.loadingTasks = true;
-            $http.get(createSearchUrl(page)).
-                success(function (data, status, headers, config) {
-                    showTasks(data);
-                }).
-                error(function (data, status, headers, config) {
-                    console.log('Couldn\'t fetch tasks : ' + status);
-                    $scope.loadingTasks = false;
-                });
-        };
+    $scope.open = function (obj, $event) {
+        $event.preventDefault();
+        $event.stopPropagation();
 
-        /*
-         * Show the results from a rest call on the screen
-         */
-        var showTasks = function (data) {
+        obj.opened = true;
+    };
 
-            // Task data
-            $scope.tasks = data.data;
-            $scope.loadingTasks = false;
+    $scope.setFormEnum = function (enumm, item) {
+        item.value = enumm.id;
+        item.name = enumm.name;
+    }
 
-            var total = data.total;
-            var pageSize = $scope.pageSize;
-            var realSize = data.size;
-            var start = data.start;
+    $scope.cancel = function (task) {
+        removeTaskFromDetails(task);
+    }
 
-            console.log('Total = ' + total);
-            console.log('size = ' + pageSize);
-            console.log('Start = ' + start);
+    /**
+     * Finish Tas
+     * @param detailedTask
+     */
+    $scope.finish = function (detailedTask) {
 
-            // Pagination
-            if (total > pageSize) {
-
-                $scope.numberOfPages = Math.floor(total / pageSize);
-                if (total % pageSize > 0) {
-                    $scope.numberOfPages = $scope.numberOfPages + 1;
-                }
-                console.log('nrOfPages = ' + $scope.numberOfPages);
-
-                $scope.currentPage = (Math.floor(start / pageSize)) + 1; // +1 for normal people numbering
-
-            } else {
-
-                $scope.numberOfPages = -1;
-                $scope.currentPage = -1;
-
-            }
-
-            // Description above tasks
-            if (total > 0) {
-                $scope.indexOfFirstTask = start + 1;
-                $scope.indexOfLastTask = start + realSize;
-                $scope.totalNumberOfTasks = total;
-            } else {
-                $scope.totalNumberOfTasks = 0;
-            }
-
-            console.log('Current page is ' + $scope.currentPage);
-
-        };
-
-        /**
-         * Used to determine whether to show the claim button or not
-         */
-        $scope.isUnclaimedTask = function() {
-          return $scope.candidateGroup && $scope.candidateGroup.id != noGroupId;
-        };
-
-        /**
-         * Claim a task
-         */
-        $scope.claimTask = function(task) {
-            $scope.loadingTasks = true;
-
-            $http.put('http://localhost:8080/activiti-webapp-rest2/service/task/' + task.id + "/claim").
-                success(function (data, status, headers, config) {
-                    // After a successful claim, simply refresh the task list with the current search params
-                    executeSearch();
-                }).
-                error(function (data, status, headers, config) {
-                    console.log('Couldn\'t claim task : ' + status);
-                });
-
-            $scope.loadingTasks = false;
+        var objectToSave = {
+            "taskId": detailedTask.id,
+            properties: []
         }
 
-    })
-;
+
+        if (typeof detailedTask.propertyForSaving != "undefined") {
+            for (var key in detailedTask.propertyForSaving) {
+                var forObject = detailedTask.propertyForSaving[key];
+
+                if (!forObject.writable) {//if this is not writeable property do not use it
+                    continue;
+                }
+
+                if (forObject.value != null) {
+                    var elem = {
+                        "id": forObject.id,
+                        "value": forObject.value
+                    };
+                    if (typeof forObject.datePattern != 'undefined') {//format
+                        var date = new Date(forObject.value);
+                        elem.value = moment(date).format(forObject.datePattern.toUpperCase());
+                    }
+                    objectToSave.properties.push(elem);
+                }
+            }
+
+            var saveForm = new FormDataService(objectToSave);
+            saveForm.$save(function () {
+                $scope.loadTasks();
+            });
+        } else {
+            var action = new TasksService();
+            action.action = "complete";
+            action.$save({"taskId": detailedTask.id}, function () {
+                $scope.loadTasks();
+                removeTaskFromDetails(detailedTask);
+            });
+        }
+
+    }
+
+    $scope.loadTasks();
+
+    $scope.detailedTasks = new Array();
 
 
+    function removeTaskFromDetails(task) {
+        removeTask($scope.detailedTasks, task);
+    }
+
+    /**
+     * Remove task from tasks array
+     * @param tasks
+     * @param task
+     */
+    function removeTask(tasks, task) {
+        for (var i = 0; i < tasks.length; i++) {
+            if (tasks[i].id == task.id) {
+                tasks.splice(i, 1);
+            }
+        }
+    }
+
+    /**
+     * returns task from detailed tasks
+     * @param task
+     * @returns {*}
+     */
+    function getTaskFromDetails(task) {
+        for (var i = 0; i < $scope.detailedTasks.length; i++) {
+            if ($scope.detailedTasks[i].id == task.id) {
+                return $scope.detailedTasks[i];
+            }
+        }
+
+        return null;
+    }
+
+
+
+
+});
