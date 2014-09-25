@@ -12,7 +12,7 @@ angular.module('activitiApp').controller('ProcessesCtrl', function ($scope, $roo
 
     $scope.startTheProcess = function (processDefinition) {
 
-        TasksModalService.loadForm(processDefinition);
+        TasksModalService.loadProcessForm(processDefinition);
 
         var formService = new FormDataService({processDefinitionId:processDefinition.id});
         formService.$startTask(function(data){

@@ -44,7 +44,7 @@ angular.module('activitiApp').controller("TasksCtrl", function ($scope, $rootSco
 
 
     $scope.loadTask = function (task) {
-        TasksModalService.loadForm(task);
+        TasksModalService.loadTaskForm(task);
     };
 
 
