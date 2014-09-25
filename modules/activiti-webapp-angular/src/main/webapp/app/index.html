@@ -51,6 +51,10 @@
                             <li><a ng-click="changeView('groups')">Groups</a></li>
                         </ul>
                     </li>
+                    <li>
+                        <a ng-click="changeView('processes')"><span class="glyphicon glyphicon-cog"></span>Processes</a>
+
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-show="loggedin" class="dropdown" ng-show="loggedin"><a href="#" class="dropdown-toggle"
@@ -93,6 +97,10 @@
     <script src="scripts/controllers/task.js"></script>
     <script src="scripts/controllers/users.js"></script>
     <script src="scripts/controllers/groups.js"></script>
+    <script src="scripts/controllers/processes.js"></script>
+    <script src="scripts/controllers/TaskModelController.js"></script>
+
+
 
 
     <script src="scripts/directives/pastTime.js"></script>
@@ -104,7 +112,9 @@
     <script src="scripts/factory/groupService.js"></script>
     <script src="scripts/factory/forms.js"></script>
     <script src="scripts/factory/tasks.js"></script>
-
+    <script src="scripts/factory/processDefinitionService.js"></script>
+    <script src="scripts/factory/processInstanceService.js"></script>
+    <script src="scripts/factory/tasksModal.js"></script>
     <!-- endbuild -->
 
   </body>

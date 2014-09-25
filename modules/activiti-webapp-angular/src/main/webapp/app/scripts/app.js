@@ -26,6 +26,9 @@ angular.module('activitiApp', [ 'ngResource', 'ui.bootstrap', "ngRoute",'angular
             }).when('/tasks', {
                 templateUrl: 'views/tasks.html',
                 controller: 'TasksCtrl'
+            }).when('/processes', {
+                templateUrl: 'views/processes.html',
+                controller: 'ProcessesCtrl'
             })
 //            .when('/tasks', {
 //                templateUrl: 'views/tasks.html',

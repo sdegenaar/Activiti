@@ -1,16 +1,16 @@
 <div class="container">
     <div class="row row action-row">
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-            <button class="btn btn-default" ng-click="loadTasksType('assigned')">My tasks</button>
+            <button class="btn btn-default" ng-click="loadTasksType('assigned')" ng-class="{selected: tasksType=='assigned'}">My tasks</button>
         </div>
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-            <button class="btn btn-default" ng-click="loadTasksType('owned')">Owned</button>
+            <button class="btn btn-default" ng-click="loadTasksType('owned')" ng-class="{selected: tasksType=='owned'}">Owned</button>
         </div>
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-            <button class="btn btn-default" ng-click="loadTasksType('involved')">Involved</button>
+            <button class="btn btn-default" ng-click="loadTasksType('involved')" ng-class="{selected: tasksType=='involved'}">Involved</button>
         </div>
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-            <button class="btn btn-default" ng-click="loadTasksType('unassigned')">Unassigned</button>
+            <button class="btn btn-default" ng-click="loadTasksType('unassigned')" ng-class="{selected: tasksType=='unassigned'}">Unassigned</button>
         </div>
 
 
@@ -25,6 +25,9 @@
     </div>
 
     <div class="table-holder">
+
+        <div ng-show="tasks.data.length==0" class="text-center">No tasks here!</div>
+
         <div class="row user-row" ng-repeat="task in tasks.data | filter:query" ng-click="loadTask(task)"
              priority="{{task.priority}}"
              ng-class="task.priority<31?'row-success':task.priority<51?'row-warning':'row-danger'">

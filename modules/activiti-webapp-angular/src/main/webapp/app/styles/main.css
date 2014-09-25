@@ -79,3 +79,23 @@ div.row.user-row > div {
 .aaCurrent{
     color:#ff851b;
 }
+
+
+.taskForm .form-group{
+    margin:5px 5px;
+
+}
+
+.rowSplitter{
+
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e5e5;
+    margin-left: -30px!important;
+    margin-right: -30px!important;
+
+}
+
+
+button.btn.selected {
+    border-bottom-color: #333333;
+}
