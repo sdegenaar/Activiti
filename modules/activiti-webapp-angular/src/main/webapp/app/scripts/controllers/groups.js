@@ -1,4 +1,3 @@
-
 angular.module('activitiApp').controller('GroupsCtrl', function ($scope, $rootScope, $location, GroupService, $modal) {
     if (typeof  $rootScope.loggedin == 'undefined' || $rootScope.loggedin == false) {
         $location.path('/login');
@@ -16,7 +15,7 @@ angular.module('activitiApp').controller('GroupsCtrl', function ($scope, $rootSc
      * Create group function
      * @param newGroup
      */
-    $scope.newGroupSubmited=false;
+    $scope.newGroupSubmited = false;
     $scope.createGroup = function (newGroup) {
         var group = new GroupService(newGroup);
         group.name = newGroup.name;
@@ -66,6 +65,14 @@ angular.module('activitiApp').controller('GroupsCtrl', function ($scope, $rootSc
     };
 
     /**
+     * Cancel dialog
+     */
+    $scope.cancel = function () {
+        $scope.newGroup.id = "";
+        $scope.newGroup.name = "";
+    };
+
+    /**
      * Remove Group
      * @param group
      */
@@ -75,10 +82,69 @@ angular.module('activitiApp').controller('GroupsCtrl', function ($scope, $rootSc
         });
     };
 
-    $scope.cancel = function () {
-        $scope.newGroup.id = "";
-        $scope.newGroup.name = "";
+    $scope.query = "";
+
+    /**
+     * Groups edit dialog
+     */
+    var ModalGroupUsersInstanceCtrl = function ($scope, $modalInstance, group, UserService, GroupUserService) {
+        $scope.group = group;
+        $scope.ok = function () {
+            $modalInstance.close(group);
+        };
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+
+        function reloadUsers() {
+            $scope.groupUsers = UserService.get({"memberOfGroup": group.id});
+        }
+
+        $scope.removeUser = function (user) {
+            var groupUserService = new GroupUserService();
+            groupUserService.$delete({"group": group.id, "userId": user.id}, function () {
+                reloadUsers();
+            });
+        }
+
+        reloadUsers();
+
+        $scope.users = UserService.get();
+
+        function clearSelection() {
+            $scope.selected = undefined;
+        }
+
+        $scope.onSelect = function ($item, $model, $label) {
+            $scope.addUserError = false;
+            var groupUserService = new GroupUserService();
+            groupUserService.userId = $item.id;
+            groupUserService.$save({"group": group.id}, function () {
+                clearSelection();
+                reloadUsers();
+            }, function () {
+                $scope.addUserError = true;
+            });
+        };
+
+        clearSelection();
+
+    }
+
+    $scope.showGroupUsers = function (group) {
+        var modalInstance = $modal.open({
+            templateUrl: 'views/modals/groupUsers.html',
+            controller: ModalGroupUsersInstanceCtrl,
+            resolve: {
+                group: function () {
+                    return group;
+                }
+            }
+        });
+        modalInstance.result.then(function (newGroup) {
+
+        }, function () {
+        });
     };
 
-    $scope.query = "";
 });

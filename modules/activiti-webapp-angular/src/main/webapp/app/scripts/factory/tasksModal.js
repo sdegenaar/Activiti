@@ -183,8 +183,9 @@ angular.module('activitiApp').factory('TasksModalService', function ($modal, For
     }
 
     var loadTaskForm = function (task) {
+        console.log(task);
         FormDataService.get({"taskId": task.id}, function (data) {
-            extractForm(task, data)
+            extractForm(task, data);
         }, function (data) {
 
             if (data.data.statusCode == 404) {

@@ -1,4 +1,4 @@
-angular.module('activitiApp').controller("TasksCtrl", function ($scope, $rootScope, $location, TasksService, FormDataService, moment, $modal, TasksModalService) {
+angular.module('activitiApp').controller("TasksCtrl", function ($scope, $rootScope, $location, TasksService, FormDataService, moment, $modal, TasksModalService,ProcessDefinitionService) {
     if (typeof  $rootScope.loggedin == 'undefined' || $rootScope.loggedin == false) {
         $location.path('/login');
         return;
@@ -52,6 +52,30 @@ angular.module('activitiApp').controller("TasksCtrl", function ($scope, $rootSco
         $scope.loadTasks();
 
     });
+
+    /**
+     * Load definitions
+     */
+    $scope.loadDefinitions = function () {
+        $scope.processes = ProcessDefinitionService.get({latest: "true"});
+    }
+
+    /**
+     * starts the process
+     * @param processDefinition
+     */
+    $scope.startTheProcess = function (processDefinition) {
+
+        TasksModalService.loadProcessForm(processDefinition);
+
+        var formService = new FormDataService({processDefinitionId: processDefinition.id});
+        formService.$startTask(function (data) {
+            console.log(data);
+        });
+    };
+
+
     $scope.loadTasks();
+    $scope.loadDefinitions();
 
 });

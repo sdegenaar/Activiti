@@ -1,4 +1,4 @@
-angular.module('activitiApp').controller('ProcessesCtrl', function ($scope, $rootScope, $location, ProcessDefinitionService, ProcessInstanceService, FormDataService,$modal, moment,TasksModalService) {
+angular.module('activitiApp').controller('ProcessesCtrl', function ($scope, $rootScope, $location, ProcessDefinitionService, ProcessInstanceService, FormDataService, $modal, moment, TasksModalService) {
     if (typeof  $rootScope.loggedin == 'undefined' || $rootScope.loggedin == false) {
         $location.path('/login');
         return;
@@ -14,15 +14,10 @@ angular.module('activitiApp').controller('ProcessesCtrl', function ($scope, $roo
 
         TasksModalService.loadProcessForm(processDefinition);
 
-        var formService = new FormDataService({processDefinitionId:processDefinition.id});
-        formService.$startTask(function(data){
+        var formService = new FormDataService({processDefinitionId: processDefinition.id});
+        formService.$startTask(function (data) {
             console.log(data);
         });
-
-        /*ProcessInstanceService.get({"processDefinitionId": processDefinition.id}, function (data) {
-            console.log(data);
-        });*/
-
     };
 
     $scope.activateTheProcessDefinition = function (processDefinition) {
@@ -33,7 +28,6 @@ angular.module('activitiApp').controller('ProcessesCtrl', function ($scope, $roo
             $scope.loadDefinitions();
         });
     }
-
 
     $scope.query = "";
 });

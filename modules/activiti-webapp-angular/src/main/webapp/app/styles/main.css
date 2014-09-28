@@ -96,6 +96,7 @@ div.row.user-row > div {
 }
 
 
-button.btn.selected {
-    border-bottom-color: #333333;
+li.selected {
+    color: #333333 !important;
+    background-color: rgb(248, 248, 248);
 }

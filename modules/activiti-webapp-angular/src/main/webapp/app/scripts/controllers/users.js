@@ -79,4 +79,64 @@ angular.module('activitiApp').
         }
 
         $scope.query = "";
+
+
+        /**
+         * Managing users groups
+         */
+
+        var ModalGroupUsersInstanceCtrl = function ($scope, $modalInstance, user, UserService, GroupUserService, GroupService) {
+
+            $scope.user = user;
+
+            $scope.ok = function () {
+                $modalInstance.close(group);
+            };
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+
+            function reloadGroups() {
+                $scope.userGroups = GroupService.get({"member": user.id});
+            }
+
+
+            $scope.removeGroup = function (group) {
+                var groupUserService = new GroupUserService();
+                groupUserService.$delete({"group": group.id, "userId": user.id}, function () {
+                    reloadGroups();
+                });
+            }
+
+
+            $scope.groups = GroupService.get();
+            $scope.onSelect = function ($item, $model, $label) {
+                $scope.addUserError = false;
+                var groupUserService = new GroupUserService();
+                groupUserService.userId = user.id;
+                groupUserService.$save({"group": $item.id}, function () {
+                    reloadGroups();
+                }, function () {
+                    $scope.addUserError = true;
+                });
+            };
+
+            reloadGroups();
+        }
+
+        $scope.showUserGroups = function (user) {
+            var modalInstance = $modal.open({
+                templateUrl: 'views/modals/userGroups.html',
+                controller: ModalGroupUsersInstanceCtrl,
+                resolve: {
+                    user: function () {
+                        return user;
+                    }
+                }
+            });
+            modalInstance.result.then(function (user) {
+
+            }, function () {
+            });
+        };
     });

@@ -15,7 +15,7 @@
     </div>
 
     <div class="table-holder">
-        <div class="row user-row" ng-repeat="user in users.data | filter:query">
+        <div class="row user-row" ng-repeat="user in users.data | filter:query" ng-click="showUserGroups(user)">
             <div class="col-xs-3 col-sm-2 col-md-1 col-lg-1">
                 <img class="img-circle"
                      src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=32"

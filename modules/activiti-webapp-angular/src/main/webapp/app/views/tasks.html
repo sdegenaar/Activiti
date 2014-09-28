@@ -1,20 +1,36 @@
 <div class="container">
     <div class="row row action-row">
-        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-            <button class="btn btn-default" ng-click="loadTasksType('assigned')" ng-class="{selected: tasksType=='assigned'}">My tasks</button>
-        </div>
-        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-            <button class="btn btn-default" ng-click="loadTasksType('owned')" ng-class="{selected: tasksType=='owned'}">Owned</button>
-        </div>
-        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-            <button class="btn btn-default" ng-click="loadTasksType('involved')" ng-class="{selected: tasksType=='involved'}">Involved</button>
-        </div>
-        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-            <button class="btn btn-default" ng-click="loadTasksType('unassigned')" ng-class="{selected: tasksType=='unassigned'}">Unassigned</button>
-        </div>
 
 
-        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+        <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">
+            <div class="btn-group" dropdown>
+                <a href class="dropdown-toggle">
+                   <span
+                           class="glyphicon glyphicon-play-circle"></span>Start <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="process in processes.data">
+                        <a ng-click="startTheProcess(process)">{{process.name}}</a></li>
+                    <li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="text-right col-xs-offset-2 col-sm-offset-4  col-md-offset-4 col-lg-offset-5 col-xs-3 col-sm-2 col-md-2 col-lg-1">
+            <div class="btn-group" dropdown>
+                <a href class="dropdown-toggle">
+                   <span
+                           class="glyphicon glyphicon-filter"></span>Filter <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu text-left ">
+                    <li ng-class="{selected: tasksType=='assigned'}"><a ng-click="loadTasksType('assigned')">My tasks</a></li>
+                    <li ng-class="{selected: tasksType=='owned'}"><a ng-click="loadTasksType('owned')">Owned</a></li>
+                    <li ng-class="{selected: tasksType=='involved'}"><a
+                            ng-click="loadTasksType('involved')">Involved</a></li>
+                    <li ng-class="{selected: tasksType=='unassigned'}"><a ng-click="loadTasksType('unassigned')">Unassigned</a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
@@ -36,11 +52,11 @@
                 {{task.assignee}}
             </div>
 
-            <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+            <div class="col-xs-7 col-sm-7 col-md-9 col-lg-9">
                 <strong>{{task.name}}</strong><br>
                 <span class="text-muted">{{task.description}}</span>
             </div>
-            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" aa-past="task.dueDate">
+            <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 text-right" aa-past="task.dueDate">
                 <span class="glyphicon glyphicon-calendar"></span>
                 <span am-time-ago="task.dueDate"></span>
             </div>
@@ -49,8 +65,9 @@
 
 </div>
 
+<!--
 
-<div class="task-holder-main" style="    position: fixed;    bottom: 0px;">
+<div class="task-holder-main" style="    position: fixed;    bottom: 0px;display: none;" >
     <div class="task-holder" ng-repeat="detailedTask in detailedTasks">
         <div class="title-bar">
             <strong>{{detailedTask.name}}</strong>
@@ -163,4 +180,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
